@@ -15,7 +15,7 @@ import java.time.ZonedDateTime;
 public class ApiExceptionHandler {
 
     @ExceptionHandler(value = {RuntimeException.class})
-    public ResponseEntity<Object> handleJobFailureException(RuntimeException e) {
+    public ResponseEntity<Object> handleRuntimeException(RuntimeException e) {
         ApiException apiException = new ApiException(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, 500, ZonedDateTime.now(ZoneId.of("Z")));
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(apiException, HttpStatus.INTERNAL_SERVER_ERROR);

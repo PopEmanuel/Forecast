@@ -21,40 +21,40 @@ public class ForecastService {
         this.forecastFeignClient = forecastFeignClient;
     }
 
-    public List<MeanForecast> getForecastForCities(List<String> cities){
-        List<MeanForecast> results = new ArrayList<>();
-        for(String city : cities){
+    public List<MeanForecast> getForecastForCities(List<String> cities) {
+        List<MeanForecast> forecastMeans = new ArrayList<>();
+        for (String city : cities) {
             WeeklyForecast forecast = new WeeklyForecast();
-            try{
+            try {
                 forecast = forecastFeignClient.getForecastForCity(city);
-            }catch (FeignException e){
+            } catch (FeignException e) {
                 log.error(e.getMessage());
             }
 
             MeanForecast meanForecast = getMeanFromWeeklyForecast(city, forecast);
-            results.add(meanForecast);
+            forecastMeans.add(meanForecast);
         }
 
-        sortForecastResultList(results);
-        return results;
+        sortForecastResultList(forecastMeans);
+        return forecastMeans;
     }
 
     private static MeanForecast getMeanFromWeeklyForecast(String city, WeeklyForecast forecast) {
         Integer windSum = forecast.getWind();
         Integer temperatureSum = forecast.getTemperature();
-        Integer days = forecast.getForecast().size() + 1;
+        int days = forecast.getForecast().size() + 1;
 
-        for(DailyForecast dailyForecast : forecast.getForecast()){
+        for (DailyForecast dailyForecast : forecast.getForecast()) {
             windSum = dailyForecast.getWind();
             temperatureSum = dailyForecast.getTemperature();
         }
 
-        Double windMean =  (double) windSum / days;
+        Double windMean = (double) windSum / days;
         Double temperatureMean = (double) temperatureSum / days;
         return new MeanForecast(city, temperatureMean, windMean);
     }
 
-    private void sortForecastResultList(List<MeanForecast> results){
-        results.sort(Comparator.comparing(MeanForecast::getName));
+    private void sortForecastResultList(List<MeanForecast> forecasts) {
+        forecasts.sort(Comparator.comparing(MeanForecast::getName));
     }
 }

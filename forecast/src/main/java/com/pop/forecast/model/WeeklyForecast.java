@@ -15,7 +15,7 @@ public class WeeklyForecast {
     private String description;
     private List<DailyForecast> forecast;
 
-    public WeeklyForecast(){
+    public WeeklyForecast() {
         temperature = 0;
         wind = 0;
         description = "";

@@ -15,12 +15,11 @@ import java.util.Arrays;
 import java.util.List;
 
 @Controller
-@RequestMapping("/api/v1/weather")
+@RequestMapping("${forecast.api.path}/weather")
 @Slf4j
 public class ForecastController {
     private final ForecastService forecastService;
     private final CsvWriterService csvWriterService;
-
     @Value("${forecast.csv.path}")
     private String csvFilePath;
 
@@ -35,7 +34,7 @@ public class ForecastController {
     }
 
     @GetMapping
-    public ResponseEntity<?> getForecastForCities(@RequestParam(value = "city") String city){
+    public ResponseEntity<?> getForecastForCities(@RequestParam(value = "city") String city) {
         List<String> cityList = Arrays.asList(city.split(","));
         log.info(cityList.toString());
 

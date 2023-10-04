@@ -16,10 +16,10 @@ public class ApiException {
     private final int httpCode;
     private final ZonedDateTime timestamp;
 
-    public ApiException(String message, HttpStatus httpStatus, int httpCode1, ZonedDateTime timestamp) {
+    public ApiException(String message, HttpStatus httpStatus, int httpCode, ZonedDateTime timestamp) {
         this.message = message;
         this.httpStatus = httpStatus;
-        this.httpCode = httpCode1;
+        this.httpCode = httpCode;
         this.timestamp = timestamp;
     }
 }
