@@ -2,6 +2,7 @@ package com.pop.forecast.client;
 
 import com.pop.forecast.model.WeeklyForecast;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -9,5 +10,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface ForecastFeignClient {
 
     @GetMapping("/{city_name}")
-    WeeklyForecast fetchData(@PathVariable(value = "city_name") String cityName);
+    WeeklyForecast getForecastForCity(@PathVariable(value = "city_name") String cityName);
 }
