@@ -1,8 +1,10 @@
 package com.pop.forecast.controller;
 
 import com.pop.forecast.model.MeanForecast;
+import com.pop.forecast.service.CsvWriterService;
 import com.pop.forecast.service.ForecastService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,13 +19,18 @@ import java.util.List;
 @Slf4j
 public class ForecastController {
     private final ForecastService forecastService;
+    private final CsvWriterService csvWriterService;
 
-    public ForecastController(ForecastService forecastService) {
+    @Value("${forecast.csv.path}")
+    private String csvFilePath;
+
+    public ForecastController(ForecastService forecastService, CsvWriterService csvWriterService) {
         this.forecastService = forecastService;
+        this.csvWriterService = csvWriterService;
     }
 
-    @GetMapping(path = "/hello")
-    public ResponseEntity<?> hello() {
+    @GetMapping(path = "/ping")
+    public ResponseEntity<?> ping() {
         return ResponseEntity.ok().build();
     }
 
@@ -33,7 +40,7 @@ public class ForecastController {
         log.info(cityList.toString());
 
         List<MeanForecast> result = forecastService.getForecastForCities(cityList);
-
+        csvWriterService.writeDataToCsv(result, csvFilePath);
         return ResponseEntity.ok(result);
     }
 }
