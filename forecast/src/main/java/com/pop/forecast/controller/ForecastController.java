@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/weather")
+@RequestMapping("${forecast.api/path}/weather")
 @Slf4j
 public class ForecastController {
     private ForecastService forecastService;
