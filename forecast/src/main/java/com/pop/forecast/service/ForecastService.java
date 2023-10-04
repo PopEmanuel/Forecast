@@ -1,7 +1,11 @@
 package com.pop.forecast.service;
 
 import com.pop.forecast.client.ForecastFeignClient;
-import com.pop.forecast.model.ForecastResult;
+import com.pop.forecast.model.DailyForecast;
+import com.pop.forecast.model.MeanForecast;
+import com.pop.forecast.model.WeeklyForecast;
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -9,21 +13,48 @@ import java.util.Comparator;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ForecastService {
-    private ForecastFeignClient forecastFeignClient;
+    private final ForecastFeignClient forecastFeignClient;
 
     public ForecastService(ForecastFeignClient forecastFeignClient) {
         this.forecastFeignClient = forecastFeignClient;
     }
 
-    public List<ForecastResult> getForecastForCities(List<String> cities){
-        List<ForecastResult> results = new ArrayList<>();
-        //Computations
+    public List<MeanForecast> getForecastForCities(List<String> cities){
+        List<MeanForecast> results = new ArrayList<>();
+        for(String city : cities){
+            WeeklyForecast forecast = new WeeklyForecast();
+            try{
+                forecast = forecastFeignClient.getForecastForCity(city);
+            }catch (FeignException e){
+                log.error(e.getMessage());
+            }
+
+            MeanForecast meanForecast = getMeanFromWeeklyForecast(city, forecast);
+            results.add(meanForecast);
+        }
+
         sortForecastResultList(results);
         return results;
     }
 
-    private void sortForecastResultList(List<ForecastResult> results){
-        results.sort(Comparator.comparing(ForecastResult::getName));
+    private static MeanForecast getMeanFromWeeklyForecast(String city, WeeklyForecast forecast) {
+        Integer windSum = forecast.getWind();
+        Integer temperatureSum = forecast.getTemperature();
+        Integer days = forecast.getForecast().size() + 1;
+
+        for(DailyForecast dailyForecast : forecast.getForecast()){
+            windSum = dailyForecast.getWind();
+            temperatureSum = dailyForecast.getTemperature();
+        }
+
+        Double windMean =  (double) windSum / days;
+        Double temperatureMean = (double) temperatureSum / days;
+        return new MeanForecast(city, temperatureMean, windMean);
+    }
+
+    private void sortForecastResultList(List<MeanForecast> results){
+        results.sort(Comparator.comparing(MeanForecast::getName));
     }
 }

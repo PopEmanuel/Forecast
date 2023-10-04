@@ -7,8 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class DailyForecast {
-    private Integer day;
-    private Integer temperature;
-    private Integer wind;
+public class MeanForecast {
+    private String name;
+    private Double temperature;
+    private Double wind;
 }
